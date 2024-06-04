@@ -1,4 +1,5 @@
 import { CartCounter } from '@/shopping-cart/components';
+
 export const metadata = {
  title: 'Shopping Cart',
  description: 'Counter Page',
