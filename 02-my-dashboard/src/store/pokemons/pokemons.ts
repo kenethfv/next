@@ -1,44 +1,65 @@
+
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { SimplePokemon } from '@/pokemons';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 /*
   {
-    '1': { id: 1, name: 'bulbasaur' },
-    '2': { id: 2, name: 'charmander' }
+    favorites: {
+      '1': { id: 1, name: 'bulbasaur' },
+      '2': { id: 2, name: 'bulbasaur' },
+    }
   }
 */
 
-interface PokemonsState {
-    [key: string]: SimplePokemon
+interface PokemonsState { 
+  favorites: { [key: string]: SimplePokemon },
 }
+
+// const getInitialState = (): PokemonsState => {
+  
+//   // if ( typeof localStorage === 'undefined' ) return {};
+//   const favorites = JSON.parse( localStorage.getItem('favorite-pokemons') ?? '{}'  );
+//   return favorites;
+// }
+
 
 const initialState: PokemonsState = {
-    // '1': { id: '1', name: 'bulbasaur' },
-    // '4': { id: '4', name: 'charmander' },
-    // '7': { id: '7', name: 'squirtle' },
-    // '6': { id: '6', name: 'charizard' },
+  favorites: {},
+  // ...getInitialState(),
+  // '1': { id: '1', name: 'bulbasaur' },
+  // '3': { id: '3', name: 'venusaur' },
+  // '5': { id: '5', name: 'Charmeleon' },
 }
 
-const pokemonSlice = createSlice({
+const pokemonsSlice = createSlice({
   name: 'pokemons',
   initialState,
   reducers: {
 
+    setFavoritePokemons( state, action: PayloadAction<{ [key: string]: SimplePokemon }> ) {
+      state.favorites = action.payload;
+    },
+
     toggleFavorite( state, action: PayloadAction<SimplePokemon> ) {
+
       const pokemon = action.payload;
       const { id } = pokemon;
 
-      if ( !!state[id] ) {
-        delete state[id]
-        return;
+      if ( !!state.favorites[id] ) {
+        delete state.favorites[id];
+        // return;
+      } else {
+        state.favorites[id] = pokemon;
       }
 
-      state[id] = pokemon
+      //TODO: No se debe de hacer en Redux
+      localStorage.setItem('favorite-pokemons', JSON.stringify( state.favorites ) );
+
     }
 
   }
 });
 
-export const { toggleFavorite } = pokemonSlice.actions
+export const { toggleFavorite, setFavoritePokemons } = pokemonsSlice.actions;
 
-export default pokemonSlice.reducer
+export default pokemonsSlice.reducer;
