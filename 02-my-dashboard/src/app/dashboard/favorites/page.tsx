@@ -1,5 +1,4 @@
-import { FavoritePokemons, PokemonGrid, PokemonsReponse, SimplePokemon } from "@/pokemons";
-import { IoHeartOutline } from "react-icons/io5";
+import { FavoritePokemons} from "@/pokemons";
 
 
 export const metadata = {
