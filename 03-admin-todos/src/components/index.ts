@@ -8,3 +8,5 @@ export { WidgetItem } from './widgets/WidgetItem'
 //Top Menu
 export { TopMenu } from './topMenu/TopMenu';
 
+//Tab Bar
+export { TabBar } from './tabBar/TabBar';
