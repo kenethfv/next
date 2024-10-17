@@ -7,11 +7,15 @@ interface Abc {
 
 async function main() {
   //Borrar registros de la base de datos
+  await prisma.user.deleteMany();
   await prisma.productImage.deleteMany();
   await prisma.product.deleteMany();
   await prisma.category.deleteMany();
 
-  const { categories, products } = initialData;
+  const { categories, products, users } = initialData;
+
+  // Users
+  await prisma.user.createMany({ data: users });
 
   //Categorias
   const categoriesData = categories.map((name) => ({ name }));
