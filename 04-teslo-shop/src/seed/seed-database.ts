@@ -1,4 +1,5 @@
 import { initialData } from "./seed";
+import { countries } from './seed-countries'
 import prisma from "../lib/prisma";
 
 interface Abc {
@@ -8,6 +9,7 @@ interface Abc {
 async function main() {
   //Borrar registros de la base de datos
   await prisma.user.deleteMany();
+  await prisma.country.deleteMany();
   await prisma.productImage.deleteMany();
   await prisma.product.deleteMany();
   await prisma.category.deleteMany();
@@ -16,6 +18,9 @@ async function main() {
 
   // Users
   await prisma.user.createMany({ data: users });
+
+  // Countries
+  await prisma.country.createMany({ data: countries });
 
   //Categorias
   const categoriesData = categories.map((name) => ({ name }));
