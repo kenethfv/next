@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { inter } from "@/config/fonts";
-import { Provider } from "@/components";
+import { Providers } from "@/components";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s -  Teslo | Shop",
-    default: "Home - Teslo | Shop",
+    template: "%s -  Santo Pecado | Shop",
+    default: "Home - Santo Pecado | Shop",
   },
   description: "Tienda virtual",
 };
@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Provider>{children}</Provider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

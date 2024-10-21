@@ -18,7 +18,7 @@ export const TopMenu = () => {
       <div>
         <Link href="/">
           <span className={`${titleFont.className} antialiased font-bold`}>
-            Teslo
+          Santo Pecado
           </span>
           <span> | Shop</span>
         </Link>

@@ -17,10 +17,14 @@ import { getUserAddress } from "./address/get-user-address";
 import { placeOrder } from "./order/place-order";
 import { getOrderById } from "./order/get-order-by-id";
 import { getOrdersByUser } from "./order/get-orders-by-user";
+import { getPaginatedOrders } from "./order/get-paginated-orders";
 
+import { setTransactionId } from "./payments/set-transaction-id";
+import { paypalCheckPayment } from "./payments/paypal-payment";
 
 // Exporta explícitamente cada función
-export { placeOrder, getOrderById, getOrdersByUser };
+export { setTransactionId, paypalCheckPayment };
+export { placeOrder, getOrderById, getOrdersByUser, getPaginatedOrders };
 export { setUserAddress, deleteUserAddress, getUserAddress };
 export { getCountries };
 export { authenticate, login, logOut, registerUser };
