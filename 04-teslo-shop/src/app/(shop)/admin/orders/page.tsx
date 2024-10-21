@@ -1,22 +1,24 @@
-// https://tailwindcomponents.com/component/hoverable-table
 export const revalidate = 0;
-import { getPaginatedOrders } from "@/actions";
-import { Title } from "@/components";
+
+// https://tailwindcomponents.com/component/hoverable-table
+import {  getPaginatedOrders } from "@/actions";
+import { Pagination, Title } from "@/components";
 
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { IoCardOutline } from "react-icons/io5";
 
 export default async function OrdersPage() {
+
   const { ok, orders = [] } = await getPaginatedOrders();
 
   if (!ok) {
-    redirect("/auth/signin");
+    redirect("/auth/login");
   }
 
   return (
     <>
-      <Title title="Ordenes" />
+      <Title title="Todas las orders" />
 
       <div className="mb-10">
         <table className="min-w-full">
@@ -58,7 +60,7 @@ export default async function OrdersPage() {
                   {order.id.split("-").at(-1)}
                 </td>
                 <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                  {`${order.OrderAddress?.firstName} ${order.OrderAddress?.lastName}`}
+                  {order.OrderAddress?.firstName} {order.OrderAddress?.lastName}
                 </td>
                 <td className="flex items-center text-sm  text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                   {order.isPaid ? (
@@ -74,17 +76,18 @@ export default async function OrdersPage() {
                   )}
                 </td>
                 <td className="text-sm text-gray-900 font-light px-6 ">
-                  <Link
-                    href={`/orders/${order.id}`}
-                    className="hover:underline"
-                  >
+                  <Link href={`/orders/${ order.id }`} className="hover:underline">
                     Ver orden
                   </Link>
                 </td>
               </tr>
             ))}
+
+            
           </tbody>
         </table>
+
+        <Pagination totalPages={ 1 } />
       </div>
     </>
   );

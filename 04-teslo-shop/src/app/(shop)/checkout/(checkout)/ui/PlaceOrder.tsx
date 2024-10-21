@@ -1,53 +1,66 @@
 "use client";
 
-import { placeOrder } from "@/actions";
-import { useAddressStore, useCartStore } from "@/store";
-import { currencyFormat } from "@/utils";
-import clsx from "clsx";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
+import clsx from 'clsx';
+
+import { placeOrder } from '@/actions';
+import { useAddressStore, useCartStore } from "@/store";
+import { currencyFormat } from '@/utils';
 
 export const PlaceOrder = () => {
+
   const router = useRouter();
   const [loaded, setLoaded] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
-  const { subTotal, tax, total, itemsInCart } = useCartStore((state) =>
+
+
+  const address = useAddressStore((state) => state.address);
+
+  const { itemsInCart, subTotal, tax, total } = useCartStore((state) =>
     state.getSummaryInformation()
   );
-  const address = useAddressStore((state) => state.address);
-  const cart = useCartStore((state) => state.cart);
-  const clearCart = useCartStore((state) => state.clearCart);
+  const cart = useCartStore( state => state.cart );
+  const clearCart = useCartStore( state => state.clearCart );
 
   useEffect(() => {
     setLoaded(true);
   }, []);
 
-  const onPlaceOrder = async () => {
-    setIsPlacingOrder(true);
 
-    const productsToOrder = cart.map((product) => ({
+  const onPlaceOrder = async() => {
+    setIsPlacingOrder(true);
+    // await sleep(2);
+
+    const productsToOrder = cart.map( product => ({
       productId: product.id,
       quantity: product.quantity,
       size: product.size,
-    }));
+    }))
 
-    //! Server Actions
-    const resp = await placeOrder(productsToOrder, address);
-    if (!resp.ok) {
+
+    //! Server Action
+    const resp = await placeOrder( productsToOrder, address);
+    if ( !resp.ok ) {
       setIsPlacingOrder(false);
       setErrorMessage(resp.message);
       return;
     }
 
-    //* Todo Salio bien
+    //* Todo salio bien!
     clearCart();
-    router.replace(`/orders/${resp.order!.id}`);
-  };
+    router.replace('/orders/' + resp.order?.id );
+
+
+  }
+
+
+
 
   if (!loaded) {
-    return <p>Loading...</p>;
+    return <p>Cargando...</p>;
   }
 
   return (
@@ -70,6 +83,7 @@ export const PlaceOrder = () => {
       <div className="w-full h-0.5 rounded bg-gray-200 mb-10" />
 
       <h2 className="text-2xl mb-2">Resumen de orden</h2>
+
       <div className="grid grid-cols-2">
         <span>No. Productos</span>
         <span className="text-right">
@@ -79,11 +93,11 @@ export const PlaceOrder = () => {
         <span>Subtotal</span>
         <span className="text-right">{currencyFormat(subTotal)}</span>
 
-        <span>Impuestos (12%)</span>
+        <span>Impuestos (15%)</span>
         <span className="text-right">{currencyFormat(tax)}</span>
 
-        <span className="text-2xl mt-5">Total: </span>
-        <span className="text-2xl mt-5 text-right">
+        <span className="mt-5 text-2xl">Total:</span>
+        <span className="mt-5 text-2xl text-right">
           {currencyFormat(total)}
         </span>
       </div>
@@ -92,29 +106,31 @@ export const PlaceOrder = () => {
         <p className="mb-5">
           {/* Disclaimer */}
           <span className="text-xs">
-            Al hacer click en <span className="font-bold">Colocar orden</span>,
-            aceptas nuestros{" "}
+            Al hacer clic en &quot;Colocar orden&quot;, aceptas nuestros{" "}
             <a href="#" className="underline">
               términos y condiciones
             </a>{" "}
             y{" "}
             <a href="#" className="underline">
-              póliticas de privacidad
+              política de privacidad
             </a>
           </span>
         </p>
 
-        <p className="text-red-500">{errorMessage}</p>
+
+        <p className="text-red-500">{ errorMessage }</p>
 
         <button
-          onClick={onPlaceOrder}
-          className={clsx({
-            "btn-primary": !isPlacingOrder,
-            "btn-disabled": isPlacingOrder,
-          })}
           // href="/orders/123"
+          onClick={ onPlaceOrder }
+          className={
+            clsx({
+              'btn-primary': !isPlacingOrder,
+              'btn-disabled': isPlacingOrder
+            })
+          }
         >
-          Colocar Orden
+          Colocar orden
         </button>
       </div>
     </div>

@@ -25,13 +25,8 @@ enum Gender {
 }
 
 enum Role {
-  user
   admin
-}
-
-enum DeliveryType {
-  delivery
-  pickup
+  user
 }
 
 model Category {
@@ -51,8 +46,11 @@ model Product {
   tags        String[] @default([])
   gender      Gender
 
-  category     Category       @relation(fields: [categoryId], references: [id])
-  categoryId   String
+  // Relaciones
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
   ProductImage ProductImage[]
   OrderItem    OrderItem[]
 
@@ -60,27 +58,32 @@ model Product {
 }
 
 model ProductImage {
-  id        Int     @id @default(autoincrement())
-  url       String
+  id  Int    @id @default(autoincrement())
+  url String
+
   product   Product @relation(fields: [productId], references: [id])
   productId String
 }
 
 model User {
-  id            String       @id @default(uuid())
+  id            String    @id @default(uuid())
   name          String
-  email         String       @unique
+  email         String    @unique
   emailVerified DateTime?
   password      String
-  role          Role         @default(user)
+  role          Role      @default(user)
   image         String?
-  address       UserAddress?
-  Order         Order[]
+
+  address UserAddress?
+
+  // Relaciones
+  Order Order[]
 }
 
 model Country {
-  id           String         @id
-  name         String
+  id   String @id
+  name String
+
   UserAddress  UserAddress[]
   OrderAddress OrderAddress[]
 }
@@ -103,18 +106,18 @@ model UserAddress {
   userId String @unique
 }
 
-// Orden de compras
+// Order de compras
 model Order {
-  id           String       @id @default(uuid())
+  id           String    @id @default(uuid())
   subTotal     Float
   tax          Float
   total        Float
   itemsInOrder Int
-  isPaid       Boolean     @default(false)
+  isPaid       Boolean   @default(false)
   paidAt       DateTime?
-  deliveryType DeliveryType @default(delivery)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relaciones
   user   User   @relation(fields: [userId], references: [id])
@@ -124,18 +127,20 @@ model Order {
   OrderAddress OrderAddress?
 
   transactionId String?
-  
 }
 
 model OrderItem {
-  id        String  @id @default(uuid())
-  quantity  Int
-  price     Float
-  size      Size
+  id       String @id @default(uuid())
+  quantity Int
+  price    Float
+  size     Size
+
+  // Relaciones
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String
+
   product   Product @relation(fields: [productId], references: [id])
   productId String
-  order     Order   @relation(fields: [orderId], references: [id])
-  orderId   String
 }
 
 model OrderAddress {
@@ -145,13 +150,13 @@ model OrderAddress {
   address    String
   address2   String?
   postalCode String
-  phone      String
   city       String
+  phone      String
 
   // Relaciones
   country   Country @relation(fields: [countryId], references: [id])
   countryId String
 
-  order   Order  @relation(fields: [orderId], references: [id])
+  Order   Order  @relation(fields: [orderId], references: [id])
   orderId String @unique
 }

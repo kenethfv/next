@@ -16,10 +16,11 @@ export const getPaginatedProductsWithImages = async ({
 }: PaginationOptions) => {
   if (isNaN(Number(page))) page = 1;
   if (page < 1) page = 1;
+
   try {
-    // 1. Obtener productos con imagenes
+    // 1. Obtener los productos
     const products = await prisma.product.findMany({
-      take,
+      take: take,
       skip: (page - 1) * take,
       include: {
         ProductImage: {
@@ -29,22 +30,25 @@ export const getPaginatedProductsWithImages = async ({
           },
         },
       },
+      //! Por género
       where: {
-        gender,
+        gender: gender,
       },
     });
 
-    // 2. Obetener total de paginas
+    // 2. Obtener el total de páginas
+    // todo:
     const totalCount = await prisma.product.count({
       where: {
-        gender,
+        gender: gender,
       },
     });
+    
     const totalPages = Math.ceil(totalCount / take);
 
     return {
       currentPage: page,
-      totalPages,
+      totalPages: totalPages,
       products: products.map((product) => ({
         ...product,
         images: product.ProductImage.map((image) => image.url),

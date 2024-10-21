@@ -1,5 +1,6 @@
-// https://tailwindcomponents.com/component/hoverable-table
 export const revalidate = 0;
+
+// https://tailwindcomponents.com/component/hoverable-table
 import { getOrdersByUser } from "@/actions";
 import { Title } from "@/components";
 
@@ -11,7 +12,7 @@ export default async function OrdersPage() {
   const { ok, orders = [] } = await getOrdersByUser();
 
   if (!ok) {
-    redirect("/auth/signin");
+    redirect("/auth/login");
   }
 
   return (
@@ -58,7 +59,7 @@ export default async function OrdersPage() {
                   {order.id.split("-").at(-1)}
                 </td>
                 <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                  {`${order.OrderAddress?.firstName} ${order.OrderAddress?.lastName}`}
+                  {order.OrderAddress?.firstName} {order.OrderAddress?.lastName}
                 </td>
                 <td className="flex items-center text-sm  text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                   {order.isPaid ? (
@@ -74,15 +75,14 @@ export default async function OrdersPage() {
                   )}
                 </td>
                 <td className="text-sm text-gray-900 font-light px-6 ">
-                  <Link
-                    href={`/orders/${order.id}`}
-                    className="hover:underline"
-                  >
+                  <Link href={`/orders/${ order.id }`} className="hover:underline">
                     Ver orden
                   </Link>
                 </td>
               </tr>
             ))}
+
+            
           </tbody>
         </table>
       </div>
