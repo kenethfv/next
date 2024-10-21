@@ -1,8 +1,8 @@
 "use server";
+import prisma from "@/lib/prisma";
 
 import { auth } from "@/auth.config";
-import { Address, Size } from "@/interfaces";
-import prisma from "@/lib/prisma";
+import type { Address, Size } from "@/interfaces";
 
 interface ProductToOrder {
   productId: string;
@@ -17,63 +17,65 @@ export const placeOrder = async (
   const session = await auth();
   const userId = session?.user.id;
 
-  // 1. Verificacion de usuario
+  // Verificar sesión de usuario
   if (!userId) {
     return {
       ok: false,
-      error: "No hay sesion de usuario",
+      message: "No hay sesión de usuario",
     };
   }
 
-  // 2. Obtener informacion de usuarios
-  // Nota: podemos llevar 2+ productos con el mismo ID
-
+  // Obtener la información de los productos
+  // Nota: recuerden que podemos llevar 2+ productos con el mismo ID
   const products = await prisma.product.findMany({
     where: {
       id: {
-        in: productIds.map((product) => product.productId),
+        in: productIds.map((p) => p.productId),
       },
     },
   });
 
-  // 3. Calcular montos // encabezado
+  // Calcular los montos // Encabezado
   const itemsInOrder = productIds.reduce((count, p) => count + p.quantity, 0);
 
-  // 4. Totales de tax, subtotal y total
+  // Los totales de tax, subtotal, y total
   const { subTotal, tax, total } = productIds.reduce(
     (totals, item) => {
       const productQuantity = item.quantity;
       const product = products.find((product) => product.id === item.productId);
-      if (!product)
-        throw new Error(`Producto ${item.productId} no encontrado - 500`);
+
+      if (!product) throw new Error(`${item.productId} no existe - 500`);
 
       const subTotal = product.price * productQuantity;
+
       totals.subTotal += subTotal;
-      totals.tax += subTotal * 0.12;
-      totals.total += subTotal * 1.12;
+      totals.tax += subTotal * 0.15;
+      totals.total += subTotal * 1.15;
 
       return totals;
     },
     { subTotal: 0, tax: 0, total: 0 }
   );
 
+  // Crear la transacción de base de datos
   try {
+
     const prismaTx = await prisma.$transaction(async (tx) => {
       // 1. Actualizar el stock de los productos
       const updatedProductsPromises = products.map((product) => {
-        // Acumular Valores
+        //  Acumular los valores
         const productQuantity = productIds
           .filter((p) => p.productId === product.id)
-          .reduce((acc, item) => acc + item.quantity, 0);
+          .reduce((acc, item) => item.quantity + acc, 0);
 
-        if (productQuantity === 0)
-          throw new Error(`Producto ${product.id} no tiene cantidad - 500`);
+        if (productQuantity === 0) {
+          throw new Error(`${product.id} no tiene cantidad definida`);
+        }
 
         return tx.product.update({
-          where: {
-            id: product.id,
-          },
+          where: { id: product.id },
           data: {
+            // inStock: product.inStock - productQuantity // no hacer
             inStock: {
               decrement: productQuantity,
             },
@@ -82,20 +84,23 @@ export const placeOrder = async (
       });
 
       const updatedProducts = await Promise.all(updatedProductsPromises);
-      // Verficar valores negativos en la existencia = no hay stock
+
+      // Verificar valores negativos en las existencia = no hay stock
       updatedProducts.forEach((product) => {
-        if (product.inStock < 0)
-          throw new Error(`Producto ${product.title} no tiene stock suficiente`);
+        if (product.inStock < 0) {
+          throw new Error(`${product.title} no tiene inventario suficiente`);
+        }
       });
 
-      // 2. Crear la orden - Encabezado - Detalle
+      // 2. Crear la orden - Encabezado - Detalles
       const order = await tx.order.create({
         data: {
-          userId,
-          total,
-          tax,
-          subTotal,
-          itemsInOrder,
+          userId: userId,
+          itemsInOrder: itemsInOrder,
+          subTotal: subTotal,
+          tax: tax,
+          total: total,
+
           OrderItem: {
             createMany: {
               data: productIds.map((p) => ({
@@ -110,35 +115,35 @@ export const placeOrder = async (
           },
         },
       });
-      // 3. Crear la direccion de la orden
 
-      const orderAdress = await tx.orderAddress.create({
+      // Validar, si el price es cero, entonces, lanzar un error
+
+      // 3. Crear la direccion de la orden
+      // Address
+      const { country, ...restAddress } = address;
+      const orderAddress = await tx.orderAddress.create({
         data: {
-          firstName: address.firstName,
-          lastName: address.lastName,
-          address: address.address,
-          address2: address.address2,
-          postalCode: address.postalCode,
-          city: address.city,
-          phone: address.phone,
-          countryId: address.country,
+          ...restAddress,
+          countryId: country,
           orderId: order.id,
         },
       });
 
       return {
-        updatedProducts,
-        order,
-        orderAdress,
+        updatedProducts: updatedProducts,
+        order: order,
+        orderAddress: orderAddress,
       };
     });
 
+
     return {
       ok: true,
-      message: "Orden creada",
       order: prismaTx.order,
-      prismaTx,
-    };
+      prismaTx: prismaTx,
+    }
+
+
   } catch (error: any) {
     return {
       ok: false,

@@ -1,21 +1,36 @@
 "use client";
+
 import { useCartStore } from "@/store";
 import { currencyFormat } from "@/utils";
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 
 export const OrderSummary = () => {
-  const { subTotal, tax, total, itemsInCart } = useCartStore(
-    (state) => state.getSummaryInformation()
-  );
+
+  const router = useRouter();
+
   const [loaded, setLoaded] = useState(false);
+  const { itemsInCart, subTotal, tax, total } = useCartStore((state) =>
+    state.getSummaryInformation()
+  );
 
   useEffect(() => {
     setLoaded(true);
   }, []);
 
-  if (!loaded) {
-    return <p>Loading...</p>;
-  }
+
+  useEffect(() => {
+
+    if ( itemsInCart === 0 && loaded === true )   {
+      router.replace('/empty')
+    }
+
+
+  },[ itemsInCart, loaded ])
+
+
+
+  if (!loaded) return <p>Loading...</p>;
 
   return (
     <div className="grid grid-cols-2">
@@ -27,11 +42,11 @@ export const OrderSummary = () => {
       <span>Subtotal</span>
       <span className="text-right">{currencyFormat(subTotal)}</span>
 
-      <span>Impuestos (12%)</span>
+      <span>Impuestos (15%)</span>
       <span className="text-right">{currencyFormat(tax)}</span>
 
-      <span className="text-2xl mt-5">Total: </span>
-      <span className="text-2xl mt-5 text-right">{currencyFormat(total)}</span>
+      <span className="mt-5 text-2xl">Total:</span>
+      <span className="mt-5 text-2xl text-right">{currencyFormat(total)}</span>
     </div>
   );
 };

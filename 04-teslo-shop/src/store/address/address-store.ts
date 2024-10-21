@@ -13,11 +13,10 @@ interface State {
     phone: string;
   };
 
-  //Methods
+  // Methods
   setAddress: (address: State["address"]) => void;
 }
 
-// Methods
 export const useAddressStore = create<State>()(
   persist(
     (set, get) => ({
@@ -25,13 +24,13 @@ export const useAddressStore = create<State>()(
         firstName: "",
         lastName: "",
         address: "",
+        address2: "",
         postalCode: "",
         city: "",
         country: "",
         phone: "",
       },
 
-      // Methods
       setAddress: (address) => {
         set({ address });
       },
