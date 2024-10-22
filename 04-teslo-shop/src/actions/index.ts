@@ -7,6 +7,7 @@ import { registerUser } from "./auth/register";
 import { getProductBySlug } from "./product/get-product-by-slug";
 import { getPaginatedProductsWithImages } from "./product/product-pagination";
 import { getStockBySlug } from "./product/get-stock-by-slug";
+import { createUpdateProduct } from "./product/create-update-product";
 
 import { getCountries } from "./country/getCountries";
 
@@ -35,4 +36,9 @@ export { placeOrder, getOrderById, getOrdersByUser, getPaginatedOrders };
 export { setUserAddress, deleteUserAddress, getUserAddress };
 export { getCountries };
 export { authenticate, login, logOut, registerUser };
-export { getProductBySlug, getPaginatedProductsWithImages, getStockBySlug };
+export {
+  getProductBySlug,
+  getPaginatedProductsWithImages,
+  getStockBySlug,
+  createUpdateProduct,
+};

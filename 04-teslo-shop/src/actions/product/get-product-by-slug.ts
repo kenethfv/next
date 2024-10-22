@@ -1,4 +1,4 @@
-'use server'
+"use server";
 import prisma from "@/lib/prisma";
 
 export const getProductBySlug = async (slug: string) => {
@@ -8,18 +8,14 @@ export const getProductBySlug = async (slug: string) => {
         slug,
       },
       include: {
-        ProductImage: {
-            select: {
-                url: true,
-            },
-        }
+        ProductImage: true
       },
     });
-    if (!product) return null
+    if (!product) return null;
 
     return {
-        ...product,
-        images: product.ProductImage.map((image) => image.url),
+      ...product,
+      images: product.ProductImage.map((image) => image.url),
     };
   } catch (error) {
     throw new Error("No se pudo cargar el producto por slug");
