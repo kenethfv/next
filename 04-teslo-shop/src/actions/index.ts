@@ -8,6 +8,7 @@ import { getProductBySlug } from "./product/get-product-by-slug";
 import { getPaginatedProductsWithImages } from "./product/product-pagination";
 import { getStockBySlug } from "./product/get-stock-by-slug";
 import { createUpdateProduct } from "./product/create-update-product";
+import { deleteProductImage } from "./product/delete-product-image";
 
 import { getCountries } from "./country/getCountries";
 
@@ -41,4 +42,5 @@ export {
   getPaginatedProductsWithImages,
   getStockBySlug,
   createUpdateProduct,
+  deleteProductImage,
 };

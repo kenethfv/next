@@ -6,9 +6,17 @@ interface Props {
   className?: React.StyleHTMLAttributes<HTMLImageElement>["className"];
   width: number;
   height: number;
+  style?: React.StyleHTMLAttributes<HTMLImageElement>["style"];
 }
 
-export const ProductImage = ({ src, alt, className, width, height }: Props) => {
+export const ProductImage = ({
+  src,
+  alt,
+  className,
+  width,
+  height,
+  style,
+}: Props) => {
   const localSrc = src
     ? src.startsWith("http")
       ? src
@@ -21,6 +29,7 @@ export const ProductImage = ({ src, alt, className, width, height }: Props) => {
       width={width}
       height={height}
       className={className}
+      style={style}
     />
   );
 };
