@@ -22,7 +22,14 @@ import { getPaginatedOrders } from "./order/get-paginated-orders";
 import { setTransactionId } from "./payments/set-transaction-id";
 import { paypalCheckPayment } from "./payments/paypal-payment";
 
+import { getPaginatedUsers } from "./user/get-paginated-users";
+import { changeRoleUser } from "./user/change-role-user";
+
+import { getCategories } from "./category/get-categories";
+
 // Exporta explícitamente cada función
+export { getCategories };
+export { getPaginatedUsers, changeRoleUser };
 export { setTransactionId, paypalCheckPayment };
 export { placeOrder, getOrderById, getOrdersByUser, getPaginatedOrders };
 export { setUserAddress, deleteUserAddress, getUserAddress };
