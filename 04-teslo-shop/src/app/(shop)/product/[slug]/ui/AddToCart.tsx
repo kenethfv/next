@@ -19,7 +19,6 @@ export const AddToCart = ({ product }: Props) => {
   const addToCart = () => {
     setPosted(true);
     if (!size) return;
-    console.log("test");
     const cartProduct: CartProduct = {
       id: product.id,
       slug: product.slug,

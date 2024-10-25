@@ -1,5 +1,5 @@
 import { getOrderById } from "@/actions";
-import { PayPalButton, Title } from "@/components";
+import { PaymentsForm, PayPalButton, Title } from "@/components";
 import { currencyFormat } from "@/utils";
 import clsx from "clsx";
 import Image from "next/image";
@@ -107,10 +107,7 @@ export default async function OrderIdPage({ params }: Props) {
               <span className="text-2xl mt-5 text-right">{currencyFormat(order!.total)}</span>
             </div>
 
-            <PayPalButton 
-              amount={order!.total}
-              orderId={order!.id}
-            />
+            <PaymentsForm total={order!.total} id={order!.id} />
           </div>
         </div>
       </div>

@@ -29,19 +29,19 @@ export const TopMenu = () => {
           className="m-2 p-2 rounded-md transition-all hover:bg-gray-100"
           href="/gender/men"
         >
-          Hombres
+          Santo Pecado
         </Link>
         <Link
           className="m-2 p-2 rounded-md transition-all hover:bg-gray-100"
           href="/gender/women"
         >
-          Mujeres
+          Negro Sazón
         </Link>
         <Link
           className="m-2 p-2 rounded-md transition-all hover:bg-gray-100"
           href="/gender/kid"
         >
-          Niños
+          Barriga Llena
         </Link>
       </div>
       {/* search, cart, menu */}
